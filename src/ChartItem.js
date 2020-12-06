@@ -10,6 +10,7 @@ import {Button} from "@material-ui/core";
 
 export const ChartItem = (props) => {
     const {dataIn, dataOut, labels, id, title} = props;
+    console.log(dataIn);
     useEffect(() => {
         const ctx = document.getElementById(id);
         new Chart(ctx, {
@@ -65,13 +66,7 @@ export const ChartItem = (props) => {
         });
     });
     // Return a grid item with paper styling
-    return <Grid item xs={6}>
-        <Paper>
-            <canvas id={id} widht="400" height="200"></canvas>
-            <Button onClick={alertPrevDay} variant={'outlined'}>PREV DAY</Button>
-            <Button onClick={alertNextDay} variant={'outlined'}>NEXT DAY</Button>
-        </Paper>
-    </Grid>
+    return <canvas id={id} widht="400" height="200"></canvas>
 }
 
 const alertNextDay = () => {

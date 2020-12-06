@@ -32,7 +32,7 @@ class App extends Component {
     //         .then(res => this.setState({ apiResponse: res }))
     // }
     fetchYearDailySums() {
-        fetch("http://localhost:9000/api/counts/full_year")
+        fetch("http://localhost:9000/api/counts/year/2012")
             .then(res => res.text())
             .then(res => {
                 res = JSON.parse(res);
@@ -49,7 +49,7 @@ class App extends Component {
     }
 
     fetchSingleDayHourly() {
-        fetch("http://localhost:9000/api/counts/day")
+        fetch("http://localhost:9000/api/counts/day/2012-05-01")
             .then(res => res.text())
             .then(res => {
                 res = JSON.parse(res);
