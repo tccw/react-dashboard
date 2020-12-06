@@ -18,19 +18,37 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 
 class App extends Component {
     constructor(props) {
-        super(props);
-        this.state = { apiResponse: [], dailyResponse: []};
+        super(props); // al react components with a constructor call super() first
+
+        this.onChangeDate = this.onChangeDate.bind(this);
+        this.onChangeWeek = this.onChangeWeek.bind(this);
+
+        this.state = {
+            fullYearProcessed: [],
+            dailyProcessed: [],
+            weeklyProcessed: []
+        };
     }
 
-    // callAPI() {
-    //     fetch("http://localhost:9000/api/counts")
-    //         .then(res => res.text())
-    //         .then(res => this.setState({ apiResponse: res }))
-    // }
+    componentDidMount() {
+        this.fetchYearDailySums();
+        this.fetchSingleDayHourly();
+    }
+
+    onChangeDate() {
+        this.fetchSingleDayHourly();
+    }
+
+    onChangeWeek() {
+        this.fetchWeekAroundDate();
+    }
+
+
     fetchYearDailySums() {
         fetch("http://localhost:9000/api/counts/full_year")
             .then(res => res.text())
@@ -44,53 +62,50 @@ class App extends Component {
                 for (let i = 1; i < dates.length; i++ ) {
                     yearlyData.push([new Date(dates[i]), c_in[i]]);
                 }
-                this.setState({apiResponse: yearlyData});
+                this.setState({fullYearProcessed: yearlyData});
             });
     }
 
-    fetchSingleDayHourly() {
-        fetch("http://localhost:9000/api/counts/day")
+    fetchSingleDayHourly(iso_date_string) {
+        fetch("http://localhost:9000/api/counts/day/?date=" + iso_date_string)
             .then(res => res.text())
             .then(res => {
                 res = JSON.parse(res);
-                let datasets = [];
-                console.log(res['count_in']);
-                let dialyObj = {id: 0,
+                let dailyObj = {id: 0,
                     dataIn: res['count_in'],
                     dataOut: res['count_out'],
                     labels: res['labels'],
                     title: "Hourly Counts"};
-                let weeklyObj = {
-                    id: 1,
-                    dataIn: [18094,19937,22110,25572,22937,24380,11848],
-                    dataOut: [11969,12712,14287,15629,13706,14510,8173],
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    title: "Daily Counts - One Week"
-                }
-                datasets.push(dialyObj, weeklyObj);
 
-                this.setState({dailyResponse: datasets});
+                this.setState({dailyProcessed: dailyObj});
         });
     }
 
-    componentDidMount() {
-        this.fetchYearDailySums();
-        this.fetchSingleDayHourly()
+    fetchWeekAroundDate(iso_date_string) {
+        fetch("http://localhost:9000/api/counts/week/?date=" + iso_date_string)
+            .then(res => res.text())
+            .then(res => {
+                res = JSON.parse(res);
+                
+            })
     }
+
     
     render() {
         return (
                 <div>
                     <h1 align={'center'}>Store Visitor Count Dashboard</h1>
-                    <Grid container spacing={2}
-                          direction={'row'}
-                          alignItems={'baseline'}>{this.state.dailyResponse.map((data) =>{
-                        return <ChartItem key={data.id} {...data}/>
-                    })}
+                    <Grid container spacing={2} direction={'row'} alignItems={'baseline'}>
+                        <Grid item xs={6}>
+                            <ChartItem key={this.state.dailyProcessed.id} {...this.state.dailyProcessed}/>
+                        </Grid>
+                        <Grid>
+                            <ChartItem key={this.state.weeklyProcessed.id} {...this.state.weeklyProcessed}/>
+                        </Grid>
                         <Grid item xs={12}>
                             <Paper>
                                 {/*<CalendarGraphItem className={"flex-col-scroll"} data={yearlyData} />*/}
-                                <CalendarGraphItem className={"flex-col-scroll"} data={this.state.apiResponse} />
+                                <CalendarGraphItem className={"flex-col-scroll"} data={this.state.fullYearProcessed} />
                             </Paper>
                         </Grid>
                     </Grid>
