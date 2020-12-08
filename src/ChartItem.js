@@ -6,13 +6,15 @@ import {Button} from "@material-ui/core";
 // import db from "./Database";
 
 // Chart.default.pointStyle.;
-
+// let chart;
 
 export const ChartItem = (props) => {
     const {dataIn, dataOut, labels, id, title} = props;
-    console.log(dataIn);
+
+    // if (ctx != undefined) { ctx.destroy()}
     useEffect(() => {
         const ctx = document.getElementById(id);
+        // if (chart != undefined) {chart.destroy();}
         new Chart(ctx, {
             type: "line",
             data: {
@@ -49,13 +51,7 @@ export const ChartItem = (props) => {
                         {
                             gridLines: {
                                 display: false
-                            },
-                            // scaleLabel: {
-                            //     display:true,
-                            //     labelString: "Person Count",
-                            //     fontSize: 15
-                            //
-                            // }
+                            }
                         }
                     ]},
                     title: {
@@ -66,6 +62,7 @@ export const ChartItem = (props) => {
         });
     });
     // Return a grid item with paper styling
+
     return <canvas id={id} widht="400" height="200"></canvas>
 }
 
