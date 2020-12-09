@@ -5,7 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import {ChartItem} from "./ChartItem";
 import {CalendarGraphItem} from "./CalendarGraphItem";
 import {Button} from "@material-ui/core";
-import DayChart from "./DayChart";
+import DayChartOld from "./DayChartOld";
+import DayChartNew from "./DayChartNew";
 import WeekChart from "./WeekChart";
 
 const useStyles = makeStyles((theme) => ({
@@ -57,19 +58,22 @@ class App extends Component {
     }
 
     // TODO: why are charts rendering on top of each other with each button click?
+    // https://github.com/chartjs/Chart.js/issues/920
+    // https://www.xspdf.com/resolution/52736792.html
+    // https://www.odoo.com/forum/help-1/how-to-solve-hover-issue-when-using-chart-js-163875
+    // TODO Switch to Rechart. Chartjs not worth it.
     render() {
         return (
                 <div>
                     <Grid container spacing={2} direction={'row'} alignItems={'baseline'}>
                         <Grid item xs={6}>
                             <Paper>
-                                <DayChart/>
+                                <DayChartOld/>
                             </Paper>
                         </Grid>
                         <Grid item xs={6}>
                             <Paper>
                                 <WeekChart/>
-                                {/*<Button onClick={this.onChangeDate()} variant={'outlined'}>NEXT WEEK</Button>*/}
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>

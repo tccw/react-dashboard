@@ -4,16 +4,22 @@ import {Button} from "@material-ui/core";
 
 
 class WeekChart extends Component {
+    // TODO decide if storing the date as a class variable is a bad idea
+    currentDate = new Date("2012-02-06T08:00:00.000Z");
+
     constructor(props) {
         super();
+
+        this.getPreviousWeek = this.getPreviousWeek.bind(this);
+        this.getNextWeek = this.getNextWeek.bind(this);
+
         this.state = {
             weeklyProcessed: [],
-            currentDate: new Date("2012-02-06T08:00:00.000Z")
         };
     }
 
     componentDidMount() {
-        this.fetchWeekAroundDate(this.state.currentDate.toISOString().substr(0,10));
+        this.fetchWeekAroundDate(this.currentDate.toISOString().substr(0,10));
     }
 
     /* /api/counts/week/{date} */
@@ -30,7 +36,17 @@ class WeekChart extends Component {
                 let result = [];
                 result.push(dailySingleWeek)
                 this.setState({weeklyProcessed: result});
-            }).then(() => console.log(this.state.weeklyProcessed));
+            });
+    }
+
+    getPreviousWeek = () => {
+        this.currentDate.setDate(this.currentDate.getDate() - 7);
+        this.fetchWeekAroundDate(this.currentDate.toISOString().substr(0,10));
+    }
+
+    getNextWeek = () => {
+        this.currentDate.setDate(this.currentDate.getDate() + 7);
+        this.fetchWeekAroundDate(this.currentDate.toISOString().substr(0,10));
     }
 
     render() {
@@ -41,16 +57,8 @@ class WeekChart extends Component {
                         <ChartItem key={data.id} {...data}/>
                     )
                 })}
-                <Button onClick={()=> {
-                    let tmp_date = this.state.currentDate;
-                    tmp_date.setDate(tmp_date.getDate() - 7)
-                    this.fetchWeekAroundDate(tmp_date.toISOString().substr(0,10));
-                }} variant={'outlined'}>PREV WEEK</Button>
-                <Button onClick={()=> {
-                    let tmp_date = this.state.currentDate;
-                    tmp_date.setDate(tmp_date.getDate() + 7)
-                    this.fetchWeekAroundDate(tmp_date.toISOString().substr(0,10));
-                }} variant={'outlined'}>NEXT WEEK</Button>
+                <Button onClick={this.getPreviousWeek} variant={'outlined'}>PREV WEEK</Button>
+                <Button onClick={this.getNextWeek} variant={'outlined'}>NEXT WEEK</Button>
             </div>
         )
     }
